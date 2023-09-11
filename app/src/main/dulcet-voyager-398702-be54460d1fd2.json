@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "dulcet-voyager-398702",
+  "private_key_id": "be54460d1fd25874407a442f1043d706f7149c84",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEuwIBADANBgkqhkiG9w0BAQEFAASCBKUwggShAgEAAoIBAQC3XW0CJtkDzc8y\nTYKoLxtBZ9mc5EjColos+C3R9vaM6Ip0FwmcWaOafM8k/Z0bGBMv9KGD1RszjbZm\nqgPmHVznvr7QRvC1NN+f68h5O5YJUMGew/+oAh37ARVlX2In3rBf0pafxKpZMK4r\n0+/G3Goe/fLwMwT+Q/7qvGUwClU51QSwztsSRdMH/99ml/VgwWpW/nT4L+rDq1h0\nJvgmiNTAEo7p8719/+Wse3NkZQ0D90C93cDpaSLBpmxqNI0aAEOLe5qE8hfDnpcm\nVxsEHhAoz3yDU6ndVp60BiWYJp3DwQIz3w/Sbudlbe0AF6C9aVnn/+6iYzzq89tY\nZBocjHoFAgMBAAECgf9QlD3TND8p7Meg028XeZwAoiJ/T9Kpta7rFCUOn/i483fk\njDss+jdrLG3bU5g2z92etWJFDOFnRl9hvlT4Su8I6EnyPTqKZzHelT8EB6tnbJWp\nr3gp3MRQCandYo0/+ByJ/4ExtLsndr0ThY9ZVINOG0snQ0RueHMNtLzC38eUIciW\n3U8pW+YL5dLZ/QlMLLvJqKyRPYdtlxDGGkaDOsdDNYKcYOSKZw2CXzbZwCQHDiVL\n1OpP2bcwpaSnUzIu1Cu1d5SvGr9D1M9I88hsUPh4/ZB9/OjyPjDLNS/nfXUZ1/h2\ngLn9WvxjeiR8ofbxNMd4mO66Mu38Kl/BkIUWtVECgYEA9L8u9ifXny66c9ghfCk0\nSziCuYKBzK/rNZB7mNe1Uwc5g1UQxIfgIZlLcHYFmn1e0jN79MMdZOaMZjguY8hR\nKTjqP3Tl/3zh/gnaWyuES6f4OOwdq68+7fYo8HM0A1+O9hOduxXvbZFkXCYHuCzD\n0OrDJ9UuVUSLDUvdiH2kWu0CgYEAv8u9tRHetKH7wpkhZTlYtodnVtII66GzoqFL\nr9PvSf0kp931KzUq7l+XCmOk3x6clrNkusGRFV9lf0DjO4FqCAhMbg+gKaPbJe5h\nScz/RY1x6uIvY5eO2Hr3a4C0Vw4tVWJOjaRrDS8kzTxsLcyPad2pFbUDn40paPcM\nMtYjgHkCgYEAsuhqiNA5I4jCDVqpp5xrOK1XigonnhvewWobn2/XgZkfZqyxNCjr\nI0RuzAfKMtOAlAHEk/hpLVAGw9Y/uvs8sPiE69wlIO0GOnCzaL/X1oIzxlB7o/vX\n8ZVm+dYM6IZa9/EA9TikrCCDD4VRUUWP4tEp1Z1VYElZqF+T0mmd0kUCgYAuiON9\ndFmBoC+ydm743WId31p+YTWS3kf0dIgloBlV7VqgdCURF7RT49OEzMpq7EV39wzA\nl0h5VA0PRBIeFPdB/al1psrob34zhNQMEPX6zSfPopN26YXaFnPDnJWk7aaoKdL/\nYN4sc7zNIxToQ9KkEAj/YE0BwEFE23QVPYmdmQKBgFKIYR5/0lQ71358BQ/Ed1Wr\nqZkb6UopoIrSKuIiA0+mwEjEcpH91j4WXhIGOhPzFaP0qs64Eduiy3HM+kO1vNwM\nUxHIb56zDPJ6Qco4edd08Gnu/oqKJktLUBix4lYvLuivS/2nZVi0OxiDF7OPw1w8\nXWvNDoPEc50YzW5O8TCV\n-----END PRIVATE KEY-----\n",
+  "client_email": "wawa9149@dulcet-voyager-398702.iam.gserviceaccount.com",
+  "client_id": "111503020361712633203",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/wawa9149%40dulcet-voyager-398702.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
