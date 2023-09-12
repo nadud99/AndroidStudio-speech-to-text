@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "speech-to-text_App"
+rootProject.name = "STT_App"
 include(":app")
