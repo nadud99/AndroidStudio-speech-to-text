@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -30,10 +31,13 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Date;
 import java.text.SimpleDateFormat;
+import java.util.Set;
+import java.util.UUID;
 
 import com.google.cloud.speech.v1.*;
 import com.google.cloud.speech.v1.RecognitionConfig.AudioEncoding;
@@ -50,6 +54,11 @@ public class MainActivity extends AppCompatActivity {
     private boolean isRecording = false;
     private Button recordButton;
     private EditText resultTextView;
+    String bucketName = "speechtotext_app";
+
+    String languageCode = "ko-KR";
+
+    String audioFile;
 
 
     @Override
@@ -60,9 +69,10 @@ public class MainActivity extends AppCompatActivity {
         recordButton = findViewById(R.id.recordBtn);
         resultTextView = findViewById(R.id.resultTextView);
 
-        // 권한 요청
+        //request permission
         requestPermissions();
 
+        //Press the Button to start & stop recording
         recordButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -79,23 +89,34 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    //Request permissions
     private void requestPermissions() {
+        //Check the version, API 26 or higher
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             String[] permissions = {
                     Manifest.permission.RECORD_AUDIO,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE
             };
 
+            boolean allPermissionsGranted = true; // Authorization status
+
+            //Check current permission status
             for (String permission : permissions) {
-                if (ContextCompat.checkSelfPermission(this, permission)
-                        != PackageManager.PERMISSION_GRANTED) {
+                //If permission is not granted
+                if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                    allPermissionsGranted = false; //Set to 'false' if permission is not granted
                     ActivityCompat.requestPermissions(this, new String[]{permission},
-                            getPermissionRequestCode(permission));
+                            getPermissionRequestCode(permission)); //Request permissions
                 }
+            }
+            //Check with log if all permissions have been granted
+            if (allPermissionsGranted) {
+                Log.d("TAG", "Permission is granted!");
             }
         }
     }
 
+    //Permission request code
     private int getPermissionRequestCode(String permission) {
         switch (permission) {
             case Manifest.permission.RECORD_AUDIO:
@@ -107,22 +128,65 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // Handle permission request results
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQUEST_RECORD_AUDIO_PERMISSION:
+                handlePermissionResult(grantResults, Manifest.permission.RECORD_AUDIO, "Audio_Permission");
+                break;
+
+            case REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION:
+                handlePermissionResult(grantResults, Manifest.permission.WRITE_EXTERNAL_STORAGE, "Write_Storage_Permission");
+                break;
+
+            case REQUEST_PERMISSION_CODE:
+                handleMultiplePermissionResult(grantResults, "Multiple_Permissions");
+                break;
+        }
+    }
+
+    private void handlePermissionResult(int[] grantResults, String permissionName, String logMessage) {
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            Log.d("TAG", logMessage + " is granted!");
+        } else {
+            Toast.makeText(this, "설정 앱으로 가서 " + permissionName + " 권한을 활성화해주세요.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void handleMultiplePermissionResult(int[] grantResults, String logMessage) {
+        handlePermissionResult(grantResults, logMessage, logMessage);
+    }
+
+    public String FileName() {
+
+        String uuid = UUID.randomUUID().toString().replace("-", "");
+        //System.out.println(uuid);
+
+        return uuid;
+    }
+
     public String createAudioFile() {
-        // 출력 파일 이름 및 경로 설정
-        String outputFilePath = null;
+        // 오디오 파일 생성
+        // parameters
+        // Returns
+        // String outputFilePath
+
+        // Set output file name and path
+        String uuid = FileName() + ".awb";
 
         // 외부 저장소 앱별 디렉터리에 파일 생성
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmm", Locale.getDefault()).format(new Date());
-        String fileName = "audio-" + timeStamp + ".wav";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_MUSIC);
+        //String timeStamp = new SimpleDateFormat("yyMMdd_HHmm", Locale.getDefault()).format(new Date());
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_MUSIC); // 디렉터리 변경
 
         if (storageDir != null) {
-            outputFilePath = new File(storageDir, fileName).getAbsolutePath();
-            System.out.println(outputFilePath);
+            audioFile = new File(storageDir, uuid).getAbsolutePath();
+            System.out.println(audioFile);
         } else {
             Toast.makeText(this, "외부 저장소 접근 불가능합니다.", Toast.LENGTH_SHORT).show();
         }
-        return outputFilePath;
+        return audioFile;
     }
 
     private void startRecording() {
@@ -177,7 +241,6 @@ public class MainActivity extends AppCompatActivity {
         try {
             mediaRecorder.stop();
             mediaRecorder.release();
-//            mediaRecorder = null;
             isRecording = false;
             recordButton.setText("녹음 시작");
             //convertSpeechToText();
@@ -193,7 +256,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    getResoucesID();
+                    getResouceID();
                     readfile();
                     getCredentials();
                     SpeechSettings s = getSpeechSettings();
@@ -207,7 +270,7 @@ public class MainActivity extends AppCompatActivity {
         transcriptionThread.start();
     }
 
-    public int getResoucesID() {
+    public int getResouceID() {
 
         // Read the API key
         Resources resources = getResources();
@@ -224,7 +287,7 @@ public class MainActivity extends AppCompatActivity {
     public String readfile() throws IOException {
 
         Resources resources = getResources();
-        int resourceId = getResoucesID();
+        int resourceId = getResouceID();
 
         String key;
         InputStream inputStream = null;
@@ -271,24 +334,24 @@ public class MainActivity extends AppCompatActivity {
 
     public void bucket() throws IOException {
 
-        GoogleCredentials credentials = getCredentials();
-        String bucketName = "speechtotext_app";
-        String audioFileName = createAudioFile();
-
-
-        if (audioFileName == null) {
-            Log.e(TAG, "Audio file does not exist.");
-            return;
-        }
-
         try {
+
+            GoogleCredentials credentials = getCredentials();
+            //String audioFileName = createAudioFile();
+
+            if (audioFile == null) {
+                Log.e(TAG, "Audio file does not exist.");
+                return;
+            }
+
             Storage storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
-            Path audioFilePath = Paths.get(audioFileName);
+            Path audioFilePath = Paths.get(audioFile);
             byte[] audioData = Files.readAllBytes(audioFilePath);
 
             BlobId blobId = BlobId.of(bucketName, audioFilePath.getFileName().toString());
             BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
             storage.create(blobInfo, audioData);
+
         } catch (IOException e) {
             Log.e(TAG, "Error reading or uploading audio file: " + e.getMessage());
         }
@@ -299,9 +362,8 @@ public class MainActivity extends AppCompatActivity {
     public void transcribeSpeech(SpeechSettings speechSettings) throws IOException {
 
         try (SpeechClient speechClient = SpeechClient.create(speechSettings)) {
-            String bucketName = "speechtotext_app";
-            String audioFileName = createAudioFile();
-            Path audioFilePath = Paths.get(audioFileName);
+            //String audioFileName = createAudioFile();
+            Path audioFilePath = Paths.get(audioFile);
 
             // Build the RecognitionAudio object
             RecognitionAudio audio = RecognitionAudio.newBuilder()
@@ -312,7 +374,7 @@ public class MainActivity extends AppCompatActivity {
             RecognitionConfig recognitionConfig = RecognitionConfig.newBuilder()
                     .setEncoding(AudioEncoding.AMR_WB)
                     .setSampleRateHertz(16000)
-                    .setLanguageCode("ko-KR")
+                    .setLanguageCode(languageCode) //수정
                     .build();
 
             RecognizeRequest recognizeRequest = RecognizeRequest.newBuilder()
@@ -321,29 +383,25 @@ public class MainActivity extends AppCompatActivity {
                     .build();
 
             // Process the response
-            try {
-                // Perform speech recognition
-                RecognizeResponse response = speechClient.recognize(recognizeRequest);
-                List<SpeechRecognitionResult> results = response.getResultsList();
+            // Perform speech recognition
+            RecognizeResponse response = speechClient.recognize(recognizeRequest);
+            List<SpeechRecognitionResult> results = response.getResultsList();
 
-                if (results.isEmpty()) {
-                    Log.d("Transcription", "No results found");
-                } else {
-                    StringBuilder transcription = new StringBuilder();
+            if (results.isEmpty()) {
+                Log.d("Transcription", "No results found");
+            } else {
+                StringBuilder transcription = new StringBuilder();
 
-                    for (SpeechRecognitionResult result : results) {
-                        transcription.append(result.getAlternatives(0).getTranscript()).append(" ");
-                        String transcript = result.getAlternatives(0).getTranscript();
-                        Log.d("Transcription : ", transcript);
-                    }
-
-                    // Set the transcription in the TextView
-                    runOnUiThread(() -> {
-                        resultTextView.setText(transcription.toString());
-                    });
+                for (SpeechRecognitionResult result : results) {
+                    transcription.append(result.getAlternatives(0).getTranscript()).append(" ");
+                    String transcript = result.getAlternatives(0).getTranscript();
+                    Log.d("Transcription : ", transcript);
                 }
-            } catch (Exception e) {
-                Log.e("Transcription", "Error performing speech recognition: " + e.getMessage());
+
+                // Set the transcription in the TextView
+                runOnUiThread(() -> {
+                    resultTextView.setText(transcription.toString());
+                });
             }
 
         } catch (Exception e) {
@@ -351,4 +409,3 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 }
-
